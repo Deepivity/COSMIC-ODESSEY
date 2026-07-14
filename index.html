@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Odyssey — A Scroll-Driven Space Journey</title>
+    <meta name="description" content="Embark on a cinematic, interactive scroll-driven journey from the Big Bang through our Solar System to the active frontiers of space exploration with NASA, SpaceX, ESA, and JAXA.">
+    
+    <!-- Google Fonts: Syncopate (for ultra-modern, high-spaced display) & Space Grotesk (for clean telemetry data UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Local stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- CDNs: GSAP (with ScrollTrigger) & Lenis (Smooth Scroll) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body class="loading-active">
+
+    <!-- Loading Screen (In-Universe) -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader-content">
+            <div class="loader-glitch" data-text="CALIBRATING TELESCOPE">CALIBRATING TELESCOPE</div>
+            <div class="loader-bar-container">
+                <div class="loader-bar" id="loader-bar"></div>
+            </div>
+            <div class="loader-telemetry">
+                <span id="loader-status">ALIGNING OPTICS...</span>
+                <span id="loader-percentage">00%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Canvas for Three.js WebGL -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- UI Overlay Chrome (Fixed elements) -->
+    <header class="ui-chrome-header">
+        <div class="logo">COSMIC ODYSSEY</div>
+        <div class="header-telemetry" id="header-time">SYS_TIME // 00:00:00</div>
+    </header>
+
+    <!-- Left Indicator Rail (Dynamic Navigation and Progress) -->
+    <nav class="ui-nav-rail">
+        <div class="nav-indicator-line">
+            <div class="nav-indicator-fill" id="nav-indicator-fill"></div>
+        </div>
+        <div class="nav-chapters">
+            <button class="nav-chapter-btn active" data-target="section-bigbang" id="btn-nav-bigbang"><span class="num">00</span><span class="lbl">BIG BANG</span></button>
+            <button class="nav-chapter-btn" data-target="section-dawn" id="btn-nav-dawn"><span class="num">01</span><span class="lbl">COSMIC DAWN</span></button>
+            <button class="nav-chapter-btn" data-target="section-solarsystem" id="btn-nav-solar"><span class="num">02</span><span class="lbl">SOLAR SYSTEM</span></button>
+            <button class="nav-chapter-btn" data-target="section-missions" id="btn-nav-missions"><span class="num">03</span><span class="lbl">MISSIONS</span></button>
+            <button class="nav-chapter-btn" data-target="section-orgs" id="btn-nav-orgs"><span class="num">04</span><span class="lbl">AGENCIES</span></button>
+            <button class="nav-chapter-btn" data-target="section-crew" id="btn-nav-crew"><span class="num">05</span><span class="lbl">COCKPIT</span></button>
+        </div>
+    </nav>
+
+    <!-- Right Control Dock (Settings, Sound, Fidelity) -->
+    <div class="ui-control-dock">
+        <!-- Audio Control -->
+        <button id="sound-toggle" class="control-btn" aria-label="Toggle Sound" title="Toggle Sound">
+            <div class="sound-wave">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <span class="control-label">AUDIO OFF</span>
+        </button>
+
+        <!-- Fidelity Control -->
+        <button id="fidelity-toggle" class="control-btn" aria-label="Toggle High Fidelity" title="Toggle Graphics Quality">
+            <span class="fidelity-dot"></span>
+            <span class="control-label">HIGH QUALITY</span>
+        </button>
+
+        <!-- Reduced Motion Control -->
+        <button id="motion-toggle" class="control-btn" aria-label="Toggle Motion" title="Toggle Reduced Motion">
+            <span class="control-label">REDUCED MOTION</span>
+        </button>
+    </div>
+
+    <!-- Active Telemetry Timestamp Overlay (Bottom-Left) -->
+    <div class="telemetry-timestamp-overlay">
+        <div class="label">COSMIC TIMELINE</div>
+        <div class="value" id="current-timeline-val">13.8 BILLION YEARS AGO</div>
+        <div class="sub-value" id="current-timeline-sub">SINGULARITY EXPANSION EVENT</div>
+    </div>
+
+    <!-- Interactive Scroll Container -->
+    <main id="scroll-container">
+
+        <!-- Chapter 0: Big Bang -->
+        <section id="section-bigbang" class="scroll-section" data-timestamp="13.8 BILLION YEARS AGO" data-sub="SINGULARITY EXPANSION EVENT">
+            <div class="section-content hero-content">
+                <div class="meta-tag">CHAPTER 00 // ORIGIN</div>
+                <h1>THE SINGULARITY</h1>
+                <p class="lead">All matter, energy, and space compressed into an infinitely dense point. Scroll to initiate cosmic inflation.</p>
+                <div class="scroll-cue">
+                    <span class="scroll-line"></span>
+                    <span class="scroll-text">SCROLL TO EXPAND</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 1: Cosmic Dawn -->
+        <section id="section-dawn" class="scroll-section" data-timestamp="13.5 BILLION YEARS AGO" data-sub="FORMATION OF FIRST STARS & GALAXIES">
+            <div class="section-content">
+                <div class="meta-tag">CHAPTER 01 // COSMIC DAWN</div>
+                <h2>COSMIC DAWN</h2>
+                <p>The universe cools. Gravitational pull draws primordial hydrogen together. The first stars ignite, bathing the cosmos in light and organizing chaotic dust into spiral galactic structures.</p>
+            </div>
+        </section>
+
+        <!-- Chapter 2: Solar System -->
+        <section id="section-solarsystem" class="scroll-section" data-timestamp="4.6 BILLION YEARS AGO" data-sub="FORMATION OF OUR SOLAR SYSTEM">
+            <div class="section-content solar-intro">
+                <div class="meta-tag">CHAPTER 02 // COALESCENCE</div>
+                <h2>OUR STAR SYSTEM</h2>
+                <p>A spinning cloud of gas collapses under its own gravity to form the Sun. Over millions of years, leftover protoplanetary disks aggregate into planets, settling into balanced orbital sync.</p>
+                
+                <div class="system-controls-hud">
+                    <span class="hud-label">SOLAR HUD // INTERACTIVE ORBITS ACTIVE</span>
+                    <div class="hud-buttons">
+                        <button id="toggle-scale-btn" class="hud-btn">SCALE: ILLUSTRATIVE</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orbit Selector (Fixed during chapter 2 scroll, sits overlaying the orbits) -->
+        <div id="planet-dock" class="planet-dock">
+            <div class="planet-dock-title">SELECT TARGET DESTINATION</div>
+            <div class="planet-dock-items">
+                <button class="planet-dock-item" data-planet="mercury">MERCURY</button>
+                <button class="planet-dock-item" data-planet="venus">VENUS</button>
+                <button class="planet-dock-item" data-planet="earth">EARTH</button>
+                <button class="planet-dock-item" data-planet="mars">MARS</button>
+                <button class="planet-dock-item" data-planet="jupiter">JUPITER</button>
+                <button class="planet-dock-item" data-planet="saturn">SATURN</button>
+                <button class="planet-dock-item" data-planet="uranus">URANUS</button>
+                <button class="planet-dock-item" data-planet="neptune">NEPTUNE</button>
+            </div>
+        </div>
+
+        <!-- Chapter 3: Missions -->
+        <section id="section-missions" class="scroll-section" data-timestamp="1957 – PRESENT" data-sub="HUMANITY REACHES INTO THE VOID">
+            <div class="section-content timeline-section">
+                <div class="meta-tag">CHAPTER 03 // MISSIONS</div>
+                <h2>MISSION CONTROL</h2>
+                <p class="timeline-desc">Humanity launches probes and crews into deep space. Scroll to scrub the history and explore telemetry from upcoming launches.</p>
+                
+                <div class="mission-dashboard">
+                    <!-- Left Hand Launch Countdown Clock -->
+                    <div class="countdown-hud-panel">
+                        <div class="hud-header">UPCOMING MISSION COUNTDOWN</div>
+                        <div class="countdown-clock" id="upcoming-countdown">00d 00h 00m 00s</div>
+                        <div class="countdown-meta" id="upcoming-mission-name">FETCHING LIVE DATA...</div>
+                        <div class="countdown-detail" id="upcoming-mission-desc">Initializing Launch Library telemetry interface...</div>
+                    </div>
+
+                    <!-- Right Hand Scrollable Timeline -->
+                    <div class="timeline-container" id="timeline-container">
+                        <!-- Filled dynamically by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 4: Organizations -->
+        <section id="section-orgs" class="scroll-section" data-timestamp="2026" data-sub="AGENCY ALLIANCES & LOGISTICS">
+            <div class="section-content agencies-section">
+                <div class="meta-tag">CHAPTER 04 // ORGANIZATIONS</div>
+                <h2>AGENCY PORTFOLIO</h2>
+                <p>The architects of space exploration. NASA, SpaceX, ESA, JAXA, ISRO, and Roscosmos driving humanity's expansion beyond low Earth orbit.</p>
+                
+                <div class="agencies-grid" id="agencies-grid">
+                    <!-- Cards populated dynamically by static-data & API integrations -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 5: Become the Crew -->
+        <section id="section-crew" class="scroll-section" data-timestamp="TODAY" data-sub="LIVE TELEMETRY STATION">
+            <div class="section-content crew-dashboard-section">
+                <div class="meta-tag">CHAPTER 05 // COCKPIT</div>
+                <h2>BECOME THE CREW</h2>
+                <p>Sit at the terminal. Real-time updates, satellite imagery, and telemetry links direct to NASA and low Earth orbit.</p>
+                
+                <div class="cockpit-terminal">
+                    <!-- APOD Window (Visual Viewport) -->
+                    <div class="terminal-panel viewport-panel">
+                        <div class="panel-header">
+                            <span class="status-indicator"></span>
+                            <span class="title">NASA APOD // VISUAL TELESCOPE FEED</span>
+                        </div>
+                        <div class="viewport-media" id="apod-viewport">
+                            <div class="viewport-loader">RECONNECTING TELEMETRY...</div>
+                        </div>
+                        <div class="viewport-footer">
+                            <div class="apod-meta">
+                                <span class="apod-title" id="apod-title">APOD Title</span>
+                                <span class="apod-date" id="apod-date">YYYY-MM-DD</span>
+                            </div>
+                            <button id="apod-expand-btn" class="hud-btn text-btn">EXPAND DETAILS</button>
+                        </div>
+                    </div>
+
+                    <!-- Telemetry Data Feed -->
+                    <div class="terminal-panel telemetry-panel">
+                        <div class="panel-header">
+                            <span class="status-indicator"></span>
+                            <span class="title">LEO TELEMETRY // ORBITAL MATRIX</span>
+                        </div>
+                        <div class="telemetry-grid">
+                            <div class="telemetry-item">
+                                <div class="label">ISS LATITUDE</div>
+                                <div class="value code" id="iss-lat">00.0000°</div>
+                            </div>
+                            <div class="telemetry-item">
+                                <div class="label">ISS LONGITUDE</div>
+                                <div class="value code" id="iss-lon">00.0000°</div>
+                            </div>
+                            <div class="telemetry-item">
+                                <div class="label">LAUNCH ACTIVITY (2026)</div>
+                                <div class="value code" id="launch-total-count">000 LAUNCHES</div>
+                            </div>
+                            <div class="telemetry-item">
+                                <div class="label">API CONNECTION</div>
+                                <div class="value code" id="api-status-hud"><span class="badge badge-success">STABLE</span></div>
+                            </div>
+                        </div>
+                        <div class="telemetry-feed-log" id="telemetry-logs">
+                            <div class="log-line">> Calibrating radio frequency...</div>
+                            <div class="log-line">> Synchronizing ISS transponders...</div>
+                            <div class="log-line">> Telemetry feed activated.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 6: Footer -->
+        <footer id="section-footer" class="scroll-section">
+            <div class="footer-content">
+                <div class="footer-grid">
+                    <div class="footer-col brand-col">
+                        <div class="footer-logo">COSMIC ODYSSEY</div>
+                        <p class="brand-text">A scroll-scrubbed cinematic visualization of cosmic evolution and spatial exploration.</p>
+                        <div class="footer-credits">COSMIC_SYS // VER_1.0.0</div>
+                    </div>
+                    <div class="footer-col sources-col">
+                        <div class="col-title">DATA ATTRIBUTION</div>
+                        <ul>
+                            <li><a href="https://api.nasa.gov/" target="_blank" rel="noopener">NASA Open APIs</a> (APOD, ISS)</li>
+                            <li><a href="https://api.le-systeme-solaire.net/" target="_blank" rel="noopener">Solar System OpenData</a> (Planet Telemetry)</li>
+                            <li><a href="https://thespacedevs.com/llapi" target="_blank" rel="noopener">TheSpaceDevs / Launch Library 2</a> (Global Mission Feed)</li>
+                        </ul>
+                    </div>
+                    <div class="footer-col navigation-col">
+                        <div class="col-title">ODYSSEY PATH</div>
+                        <ul>
+                            <li><a href="#section-bigbang" class="scroll-link">00 Singularity</a></li>
+                            <li><a href="#section-dawn" class="scroll-link">01 Cosmic Dawn</a></li>
+                            <li><a href="#section-solarsystem" class="scroll-link">02 Star System</a></li>
+                            <li><a href="#section-missions" class="scroll-link">03 Mission Control</a></li>
+                            <li><a href="#section-orgs" class="scroll-link">04 Agencies</a></li>
+                            <li><a href="#section-crew" class="scroll-link">05 Cockpit</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Cosmic Odyssey project. Structured under open-source scientific datasets. All telemetry remains property of their respective space administrations.</p>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Sliding Planet Detail Panel -->
+    <aside id="planet-detail-panel" class="planet-detail-panel">
+        <button class="panel-close-btn" id="planet-panel-close" aria-label="Close panel" title="Close Panel">&times;</button>
+        
+        <div class="panel-body">
+            <div class="planet-identifier">
+                <span class="sys-id" id="planet-sys-id">PLANET_REF // 001</span>
+                <h2 id="planet-name">MARS</h2>
+                <div class="planet-nickname" id="planet-tagline">THE RUSTED DESERT</div>
+            </div>
+
+            <!-- Custom mini canvas for rotating planet close-up -->
+            <div class="planet-preview-viewport">
+                <canvas id="planet-preview-canvas"></canvas>
+            </div>
+
+            <div class="planet-desc" id="planet-description">
+                Cold, dry, and coated in iron oxide dust, Mars is the most explored terrestrial body in our solar system, hosting rovers, landers, and future human dreams.
+            </div>
+
+            <div class="planet-data-section">
+                <div class="hud-header">PHYSICAL TELEMETRY</div>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="label">EQUATORIAL DIAMETER</div>
+                        <div class="value" id="planet-val-diameter">6,779 km</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="label">SURFACE GRAVITY</div>
+                        <div class="value" id="planet-val-gravity">3.71 m/s²</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="label">ROTATION PERIOD (DAY)</div>
+                        <div class="value" id="planet-val-day">24h 37m</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="label">ORBITAL PERIOD (YEAR)</div>
+                        <div class="value" id="planet-val-year">687 Earth Days</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="label">MEAN TEMPERATURE</div>
+                        <div class="value" id="planet-val-temp">-63 °C</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="label">CONFIRMED MOONS</div>
+                        <div class="value" id="planet-val-moons">2 Moons</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="planet-sub-nav">
+                <button class="hud-btn sub-nav-btn prev" id="planet-btn-prev">PREV PLANET</button>
+                <button class="hud-btn sub-nav-btn next" id="planet-btn-next">NEXT PLANET</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Space Mission Detail Modal -->
+    <div id="mission-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="mission-modal-close" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <span class="meta-tag" id="mission-modal-agency">NASA // PRIVATE CONTROLLER</span>
+                <h3 id="mission-modal-title">CREW-10 LAUNCH</h3>
+                <span class="badge" id="mission-modal-status">ACTIVE</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-split">
+                    <div class="modal-data-pane">
+                        <div class="data-group">
+                            <span class="label">LAUNCH SITE</span>
+                            <span class="value" id="mission-modal-site">Kennedy Space Center, FL, USA</span>
+                        </div>
+                        <div class="data-group">
+                            <span class="label">LAUNCH VEHICLE</span>
+                            <span class="value" id="mission-modal-rocket">Falcon 9 Block 5</span>
+                        </div>
+                        <div class="data-group">
+                            <span class="label">LAUNCH WINDOW</span>
+                            <span class="value" id="mission-modal-date">September 14, 2026</span>
+                        </div>
+                    </div>
+                    <div class="modal-text-pane">
+                        <p id="mission-modal-desc">
+                            Crew-10 will transport four astronauts to the International Space Station, serving as the tenth crew rotation flight under NASA's Commercial Crew Program.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NASA APOD Image Details Modal -->
+    <div id="apod-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="apod-modal-close" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <span class="meta-tag">NASA // ASTRONOMY PICTURE OF THE DAY</span>
+                <h3 id="apod-modal-title">APOD IMAGE REFERENCE</h3>
+                <span class="badge" id="apod-modal-date">YYYY-MM-DD</span>
+            </div>
+            <div class="modal-body">
+                <p id="apod-modal-desc">Loading details from Space Telemetry Network...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application JavaScript Layers -->
+    <script type="module" src="js/static-data.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/shaders.js"></script>
+    <script type="module" src="js/space-scene.js"></script>
+    <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
